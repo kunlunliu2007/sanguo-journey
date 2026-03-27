@@ -3,25 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>读三国 · 英雄足迹</title>
+  <title>读三国</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
   <style>
     :root {
-      --ink-black: #1a1a1a;
-      --paper-cream: #F5EEE0;
-      --gold-bronze: #B8860B;
-      --gold-light: #D4AF37;
-      --vermillion: #E34234;
-      --cinnabar: #8B0000;
-      --jade-green: #00A86B;
-      --ink-gray: #4A4A4A;
-      --rice-paper: #FDF5E6;
-      --seal-red: #C41E3A;
-      --font-calligraphy: 'Ma Shan Zheng', 'ZCOOL XiaoWei', cursive;
-      --font-song: 'Noto Serif SC', 'SimSun', serif;
+      --ink: #1a1a1a;
+      --ink-light: #2d2d2d;
+      --paper: #f8f6f1;
+      --paper-dark: #e8e4db;
+      --stone: #8a8a8a;
+      --moss: #4a5548;
+      --rust: #8b4513;
+      --clay: #a0522d;
+      --mist: rgba(255,255,255,0.6);
     }
 
     * {
@@ -35,68 +32,33 @@
     }
 
     body {
-      font-family: var(--font-song);
-      background: var(--ink-black);
-      color: var(--paper-cream);
-      line-height: 1.9;
-      overflow-x: hidden;
+      font-family: 'Noto Serif SC', 'SimSun', serif;
+      font-weight: 300;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 2;
+      letter-spacing: 0.05em;
     }
 
-    /* 水墨纹理背景 */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: 
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      opacity: 0.03;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    /* 云纹装饰 */
-    .cloud-pattern {
-      position: absolute;
-      width: 100%;
-      height: 60px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0,10 Q10,0 20,10 T40,10 T60,10 T80,10 T100,10' fill='none' stroke='%23B8860B' stroke-width='0.5' opacity='0.3'/%3E%3C/svg%3E") repeat-x;
-      opacity: 0.5;
-    }
-
-    /* 顶部导航 - 古典风格 */
+    /* 极简导航 */
     nav {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 1000;
-      padding: 1rem 3rem;
+      padding: 2rem 4rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: linear-gradient(to bottom, rgba(26,26,26,0.95) 0%, transparent 100%);
-      border-bottom: 1px solid rgba(184, 134, 11, 0.2);
-    }
-
-    nav.scrolled {
-      background: rgba(26, 26, 26, 0.98);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(184, 134, 11, 0.3);
+      mix-blend-mode: difference;
     }
 
     .logo {
-      font-family: var(--font-calligraphy);
-      font-size: 1.8rem;
-      color: var(--gold-bronze);
-      letter-spacing: 0.3em;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .logo::before {
-      content: "☰";
-      font-size: 1.2rem;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: white;
+      letter-spacing: 0.5em;
     }
 
     nav ul {
@@ -106,426 +68,245 @@
     }
 
     nav a {
-      color: var(--paper-cream);
+      color: white;
       text-decoration: none;
-      font-size: 0.95rem;
-      letter-spacing: 0.15em;
-      transition: all 0.3s;
-      position: relative;
-    }
-
-    nav a::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 50%;
-      width: 0;
-      height: 2px;
-      background: var(--gold-bronze);
-      transition: all 0.3s;
-      transform: translateX(-50%);
+      font-size: 0.85rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      opacity: 0.8;
+      transition: opacity 0.3s;
     }
 
     nav a:hover {
-      color: var(--gold-bronze);
+      opacity: 1;
     }
 
-    nav a:hover::after {
-      width: 100%;
-    }
-
-    /* Hero Section - 卷轴风格 */
+    /* Hero - 极简水墨意境 */
     .hero {
       position: relative;
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: var(--ink);
       overflow: hidden;
-      background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #0d0d0d 100%);
     }
 
     .hero-bg {
       position: absolute;
       inset: 0;
-      background: 
-        linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 50%, rgba(26,26,26,1) 100%),
-        url('images/hero-bg.jpg') center/cover no-repeat;
-      filter: sepia(20%) contrast(1.1);
+      background: url('images/hero-bg.jpg') center/cover no-repeat;
+      opacity: 0.4;
+      filter: grayscale(60%) contrast(1.1);
     }
 
-    /* 卷轴边框 */
-    .scroll-frame {
+    .hero-content {
       position: relative;
       z-index: 2;
-      background: linear-gradient(to bottom, rgba(253,245,230,0.95), rgba(245,238,224,0.95));
-      padding: 4rem 5rem;
-      max-width: 800px;
       text-align: center;
-      color: var(--ink-black);
-      box-shadow: 
-        0 0 0 3px var(--gold-bronze),
-        0 0 0 6px rgba(184,134,11,0.3),
-        0 20px 60px rgba(0,0,0,0.5);
+      color: var(--paper);
     }
 
-    .scroll-frame::before,
-    .scroll-frame::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120%;
-      height: 30px;
-      background: linear-gradient(90deg, 
-        transparent 0%, 
-        var(--gold-bronze) 10%, 
-        var(--gold-light) 50%, 
-        var(--gold-bronze) 90%, 
-        transparent 100%);
-      border-radius: 50%;
-    }
-
-    .scroll-frame::before {
-      top: -15px;
-    }
-
-    .scroll-frame::after {
-      bottom: -15px;
-    }
-
-    .hero-quote {
-      font-family: var(--font-calligraphy);
-      font-size: 1.6rem;
-      color: var(--ink-gray);
-      margin-bottom: 2rem;
-      line-height: 2.2;
+    .hero-poem {
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      line-height: 2.5;
+      opacity: 0.7;
+      margin-bottom: 4rem;
     }
 
     .hero-title {
-      font-family: var(--font-calligraphy);
-      font-size: 5rem;
-      color: var(--cinnabar);
-      letter-spacing: 0.5em;
+      font-size: 4.5rem;
+      font-weight: 300;
+      letter-spacing: 1em;
+      margin-left: 1em;
       margin-bottom: 1rem;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
     }
 
-    .hero-subtitle {
-      font-size: 1rem;
-      color: var(--ink-gray);
+    .hero-sub {
+      font-size: 0.9rem;
+      font-weight: 300;
       letter-spacing: 0.8em;
-      margin-bottom: 2.5rem;
+      opacity: 0.5;
     }
 
-    /* 印章装饰 */
-    .seal {
-      display: inline-block;
-      width: 80px;
-      height: 80px;
-      border: 3px solid var(--seal-red);
-      color: var(--seal-red);
-      font-family: var(--font-calligraphy);
-      font-size: 1.5rem;
-      line-height: 74px;
-      text-align: center;
-      margin-top: 1.5rem;
-      transform: rotate(-5deg);
-      position: relative;
-    }
-
-    .seal::before {
-      content: '';
+    .scroll-line {
       position: absolute;
-      inset: 3px;
-      border: 1px solid var(--seal-red);
-    }
-
-    .hero-stats {
-      display: flex;
-      justify-content: center;
-      gap: 4rem;
-      margin-top: 2rem;
-      padding-top: 2rem;
-      border-top: 1px solid rgba(74,74,74,0.3);
-    }
-
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-number {
-      font-family: var(--font-calligraphy);
-      font-size: 2.5rem;
-      color: var(--cinnabar);
-    }
-
-    .stat-label {
-      font-size: 0.85rem;
-      color: var(--ink-gray);
-      letter-spacing: 0.2em;
-    }
-
-    .scroll-hint {
-      position: absolute;
-      bottom: 3rem;
+      bottom: 4rem;
       left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      color: var(--gold-bronze);
-      animation: float 2s ease-in-out infinite;
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--paper), transparent);
+      opacity: 0.3;
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(10px); }
-    }
-
-    .scroll-hint span {
-      display: block;
-      font-size: 0.8rem;
-      letter-spacing: 0.3em;
-      margin-bottom: 0.5rem;
-    }
-
-    /* Section 通用样式 */
+    /* Section 通用 */
     section {
-      padding: 5rem 0;
-      position: relative;
+      padding: 8rem 0;
     }
 
     .section-header {
       text-align: center;
-      margin-bottom: 4rem;
-    }
-
-    .section-divider {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .section-divider::before,
-    .section-divider::after {
-      content: '';
-      width: 80px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold-bronze), transparent);
-    }
-
-    .section-icon {
-      color: var(--gold-bronze);
-      font-size: 1.2rem;
+      margin-bottom: 5rem;
     }
 
     .section-title {
-      font-family: var(--font-calligraphy);
-      font-size: 2.8rem;
-      color: var(--paper-cream);
-      letter-spacing: 0.3em;
+      font-size: 1.8rem;
+      font-weight: 400;
+      letter-spacing: 0.5em;
+      color: var(--ink);
     }
 
-    /* 今日故事 - 画轴风格 */
-    .daily-story {
-      background: 
-        linear-gradient(to right, rgba(26,26,26,0.9), rgba(30,30,30,0.9)),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M0 30 Q15 25 30 30 T60 30' fill='none' stroke='%23B8860B' stroke-width='0.3' opacity='0.1'/%3E%3C/svg%3E");
+    .section-line {
+      width: 40px;
+      height: 1px;
+      background: var(--stone);
+      margin: 1.5rem auto 0;
+    }
+
+    /* 今日故事 */
+    .story-section {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .story-section .section-title {
+      color: var(--paper);
+    }
+
+    .story-section .section-line {
+      background: rgba(255,255,255,0.3);
     }
 
     .story-container {
-      max-width: 1100px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 0 2rem;
+      padding: 0 4rem;
       display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 4rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
       align-items: center;
     }
 
-    .story-image-wrapper {
-      position: relative;
-    }
-
-    /* 画轴边框 */
     .story-image {
       position: relative;
-      border: 8px solid;
-      border-image: linear-gradient(135deg, #8B4513 0%, #D2691E 25%, #8B4513 50%, #D2691E 75%, #8B4513 100%) 1;
-      box-shadow: 
-        inset 0 0 20px rgba(0,0,0,0.3),
-        0 10px 40px rgba(0,0,0,0.4);
     }
 
     .story-image img {
       width: 100%;
-      height: 380px;
+      aspect-ratio: 4/5;
       object-fit: cover;
-      filter: sepia(10%) contrast(1.05);
+      filter: grayscale(30%) contrast(1.05);
     }
 
-    .story-image::before {
+    .story-image::after {
       content: '';
       position: absolute;
-      inset: -20px;
-      border: 1px solid var(--gold-bronze);
-      opacity: 0.3;
+      inset: 0;
+      box-shadow: inset 0 0 100px rgba(0,0,0,0.3);
       pointer-events: none;
     }
 
     .story-content {
-      padding: 1rem 0;
+      padding: 2rem 0;
     }
 
     .story-title {
-      font-family: var(--font-calligraphy);
-      font-size: 2.5rem;
-      color: var(--gold-bronze);
-      margin-bottom: 1rem;
-      letter-spacing: 0.2em;
+      font-size: 2rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      margin-bottom: 0.5rem;
     }
 
     .story-meta {
-      display: flex;
-      gap: 2rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-      color: rgba(245, 238, 224, 0.6);
+      font-size: 0.8rem;
+      opacity: 0.5;
+      letter-spacing: 0.15em;
+      margin-bottom: 2rem;
     }
 
     .story-text {
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       line-height: 2.2;
-      color: rgba(245, 238, 224, 0.9);
-      margin-bottom: 2rem;
-      text-align: justify;
+      opacity: 0.8;
+      margin-bottom: 2.5rem;
     }
 
     .story-characters {
       display: flex;
       flex-wrap: wrap;
       gap: 0.8rem;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
 
     .character-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.5rem 1.2rem;
-      background: transparent;
-      border: 1px solid var(--gold-bronze);
-      color: var(--gold-bronze);
-      font-size: 0.85rem;
+      padding: 0.4rem 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
       cursor: pointer;
       transition: all 0.3s;
+      background: transparent;
+      color: var(--paper);
     }
 
     .character-tag:hover {
-      background: var(--gold-bronze);
-      color: var(--ink-black);
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.4);
     }
 
     .story-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
       padding: 0.8rem 2rem;
-      background: var(--cinnabar);
-      color: var(--paper-cream);
-      border: none;
-      font-family: var(--font-song);
-      font-size: 0.95rem;
-      letter-spacing: 0.1em;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: var(--paper);
+      font-family: inherit;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
       cursor: pointer;
       transition: all 0.3s;
     }
 
     .story-btn:hover {
-      background: #6B0000;
-      transform: translateY(-2px);
+      background: rgba(255,255,255,0.05);
     }
 
-    .next-story-btn {
-      background: transparent;
-      border: 1px solid var(--gold-bronze);
-      color: var(--gold-bronze);
+    .story-btn + .story-btn {
       margin-left: 1rem;
+      border-color: rgba(255,255,255,0.15);
+      opacity: 0.6;
     }
 
-    .next-story-btn:hover {
-      background: rgba(184, 134, 11, 0.1);
-      transform: none;
-    }
-
-    /* 英雄列传 - 宣纸背景 */
+    /* 英雄列传 - 极简网格 */
     .heroes-section {
-      background: var(--rice-paper);
-      color: var(--ink-black);
-      position: relative;
-    }
-
-    .heroes-section::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23000' fill-opacity='0.02' width='100' height='100'/%3E%3C/svg%3E");
-      pointer-events: none;
-    }
-
-    .heroes-section .section-title {
-      color: var(--ink-black);
-    }
-
-    .heroes-section .section-divider::before,
-    .heroes-section .section-divider::after {
-      background: linear-gradient(90deg, transparent, var(--cinnabar), transparent);
-    }
-
-    .heroes-section .section-icon {
-      color: var(--cinnabar);
+      background: var(--paper);
     }
 
     .heroes-grid {
-      max-width: 1300px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 0 2rem;
+      padding: 0 4rem;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 1.5rem;
+      gap: 3px;
+      background: var(--paper-dark);
     }
 
     .hero-card {
-      position: relative;
-      background: white;
+      background: var(--paper);
       cursor: pointer;
-      transition: all 0.4s;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .hero-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border: 1px solid var(--gold-bronze);
-      opacity: 0;
-      transition: opacity 0.3s;
-      z-index: 1;
-      pointer-events: none;
+      transition: all 0.5s ease;
+      overflow: hidden;
     }
 
     .hero-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-    }
-
-    .hero-card:hover::before {
-      opacity: 1;
+      background: var(--ink);
+      color: var(--paper);
     }
 
     .hero-card-image {
-      height: 180px;
+      aspect-ratio: 1;
       overflow: hidden;
     }
 
@@ -533,120 +314,122 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.5s;
-      filter: sepia(5%);
+      filter: grayscale(100%);
+      transition: all 0.5s ease;
     }
 
     .hero-card:hover .hero-card-image img {
-      transform: scale(1.08);
+      filter: grayscale(0%);
+      transform: scale(1.05);
     }
 
     .hero-card-content {
-      padding: 1.2rem;
+      padding: 1.5rem;
       text-align: center;
-      background: linear-gradient(to bottom, white, var(--rice-paper));
     }
 
     .hero-card-name {
-      font-family: var(--font-calligraphy);
-      font-size: 1.6rem;
-      color: var(--ink-black);
-      margin-bottom: 0.2rem;
+      font-size: 1.3rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      margin-bottom: 0.3rem;
     }
 
     .hero-card-title {
-      font-size: 0.75rem;
-      color: var(--cinnabar);
-      margin-bottom: 0.6rem;
+      font-size: 0.7rem;
+      opacity: 0.5;
       letter-spacing: 0.1em;
+      margin-bottom: 0.8rem;
     }
 
     .hero-card-quote {
-      font-size: 0.7rem;
-      color: var(--ink-gray);
+      font-size: 0.75rem;
+      opacity: 0.6;
       font-style: italic;
-      line-height: 1.5;
     }
 
     .hero-faction {
       position: absolute;
-      top: 0.8rem;
-      right: 0.8rem;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-weight: bold;
-      color: white;
-      z-index: 2;
+      top: 1rem;
+      right: 1rem;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      background: var(--ink);
+      color: var(--paper);
+      letter-spacing: 0.1em;
     }
 
-    .faction-wei { background: #1E3A5F; }
-    .faction-shu { background: #2D5A27; }
-    .faction-wu { background: #8B2323; }
+    .hero-card {
+      position: relative;
+    }
 
     /* 行迹地图 */
     .journey-section {
-      background: var(--ink-black);
+      background: var(--ink-light);
+      color: var(--paper);
     }
 
-    .journey-header {
-      text-align: center;
-      margin-bottom: 2.5rem;
+    .journey-section .section-title {
+      color: var(--paper);
+    }
+
+    .journey-section .section-line {
+      background: rgba(255,255,255,0.2);
     }
 
     .hero-selector {
       display: flex;
       justify-content: center;
-      gap: 1rem;
-      margin-top: 2rem;
+      gap: 0.5rem;
+      margin-bottom: 3rem;
       flex-wrap: wrap;
     }
 
     .hero-selector-btn {
+      padding: 0.5rem 1.2rem;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--paper);
+      font-family: inherit;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      transition: all 0.3s;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      background: transparent;
-      border: 1px solid rgba(184, 134, 11, 0.4);
-      color: var(--paper-cream);
-      font-family: var(--font-song);
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.3s;
+    }
+
+    .hero-selector-btn img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.3s;
     }
 
     .hero-selector-btn:hover,
     .hero-selector-btn.active {
-      background: rgba(184, 134, 11, 0.15);
-      border-color: var(--gold-bronze);
-      color: var(--gold-bronze);
+      border-color: rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.05);
     }
 
-    .hero-selector-btn img {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid var(--gold-bronze);
+    .hero-selector-btn:hover img,
+    .hero-selector-btn.active img {
+      filter: grayscale(0%);
     }
 
     .map-container {
-      max-width: 1100px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 0 2rem;
+      padding: 0 4rem;
     }
 
     .map-wrapper {
       position: relative;
-      height: 550px;
-      border: 2px solid var(--gold-bronze);
-      box-shadow: 
-        inset 0 0 30px rgba(0,0,0,0.3),
-        0 10px 40px rgba(0,0,0,0.3);
+      aspect-ratio: 16/10;
+      background: var(--ink);
     }
 
     #map {
@@ -656,155 +439,134 @@
 
     .map-legend {
       position: absolute;
-      bottom: 1.2rem;
-      left: 1.2rem;
-      background: rgba(26, 26, 26, 0.95);
-      padding: 1rem 1.5rem;
-      border: 1px solid var(--gold-bronze);
-    }
-
-    .legend-title {
-      font-size: 0.75rem;
-      color: var(--gold-bronze);
-      margin-bottom: 0.6rem;
-      letter-spacing: 0.15em;
-    }
-
-    .legend-items {
+      bottom: 1.5rem;
+      left: 1.5rem;
       display: flex;
-      gap: 1.2rem;
+      gap: 1.5rem;
+      font-size: 0.7rem;
+      opacity: 0.6;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      font-size: 0.7rem;
-      color: var(--paper-cream);
     }
 
     .legend-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
     }
 
-    .legend-dot.birth { background: #4CAF50; }
-    .legend-dot.battle { background: var(--vermillion); }
-    .legend-dot.capital { background: var(--gold-bronze); }
-    .legend-dot.death { background: #666; }
+    .legend-dot.birth { background: #6b8e6b; }
+    .legend-dot.battle { background: #a05a5a; }
+    .legend-dot.capital { background: #8b8b6b; }
+    .legend-dot.death { background: #5a5a5a; }
 
     /* 怀古景点 */
     .attractions-section {
-      background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+      background: var(--paper);
     }
 
     .attractions-grid {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 0 2rem;
+      padding: 0 4rem;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
+      gap: 3px;
     }
 
     .attraction-card {
       position: relative;
-      height: 320px;
+      aspect-ratio: 1;
       overflow: hidden;
       cursor: pointer;
-      border: 1px solid rgba(184, 134, 11, 0.3);
     }
 
     .attraction-card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.6s;
-      filter: sepia(15%);
+      filter: grayscale(40%);
+      transition: all 0.6s ease;
     }
 
     .attraction-card:hover img {
-      transform: scale(1.1);
+      filter: grayscale(0%);
+      transform: scale(1.05);
     }
 
     .attraction-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 1.8rem;
+      padding: 2rem;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .attraction-card:hover .attraction-overlay {
+      opacity: 1;
     }
 
     .attraction-name {
-      font-family: var(--font-calligraphy);
-      font-size: 1.5rem;
-      color: var(--paper-cream);
-      margin-bottom: 0.4rem;
+      font-size: 1.2rem;
+      color: var(--paper);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.3rem;
     }
 
     .attraction-location {
-      font-size: 0.8rem;
-      color: var(--gold-bronze);
-      margin-bottom: 0.5rem;
-    }
-
-    .attraction-desc {
-      font-size: 0.8rem;
-      color: rgba(245, 238, 224, 0.7);
-      line-height: 1.6;
-    }
-
-    /* Footer - 古典风格 */
-    footer {
-      padding: 4rem 0 2rem;
-      background: #0a0a0a;
-      text-align: center;
-      border-top: 1px solid rgba(184, 134, 11, 0.2);
-    }
-
-    .footer-quote {
-      font-family: var(--font-calligraphy);
-      font-size: 1.4rem;
-      color: var(--gold-bronze);
-      letter-spacing: 0.3em;
-      margin-bottom: 1.5rem;
-    }
-
-    .footer-divider {
-      width: 60px;
-      height: 1px;
-      background: var(--gold-bronze);
-      margin: 0 auto 1.5rem;
-    }
-
-    .footer-text {
-      font-size: 0.8rem;
-      color: rgba(245, 238, 224, 0.4);
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
       letter-spacing: 0.1em;
     }
 
+    /* Footer */
+    footer {
+      padding: 6rem 0;
+      background: var(--ink);
+      text-align: center;
+      color: var(--paper);
+    }
+
+    .footer-poem {
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      opacity: 0.4;
+      margin-bottom: 2rem;
+    }
+
+    .footer-line {
+      width: 30px;
+      height: 1px;
+      background: rgba(255,255,255,0.2);
+      margin: 0 auto;
+    }
+
     /* 响应式 */
-    @media (max-width: 1200px) {
+    @media (max-width: 1000px) {
       .heroes-grid {
         grid-template-columns: repeat(3, 1fr);
       }
-    }
-
-    @media (max-width: 900px) {
-      .hero-title {
-        font-size: 3.5rem;
-      }
-
-      .scroll-frame {
-        padding: 3rem;
-        margin: 0 1rem;
-      }
-
+      
       .story-container {
         grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .hero-title {
+        font-size: 2.5rem;
+        letter-spacing: 0.5em;
+        margin-left: 0.5em;
       }
 
       .heroes-grid {
@@ -814,595 +576,310 @@
       .attractions-grid {
         grid-template-columns: 1fr;
       }
-    }
-
-    @media (max-width: 600px) {
-      .hero-title {
-        font-size: 2.5rem;
-        letter-spacing: 0.3em;
-      }
-
-      .hero-stats {
-        flex-direction: column;
-        gap: 1.5rem;
-      }
 
       nav ul {
         display: none;
       }
 
-      .heroes-grid {
-        grid-template-columns: 1fr;
+      section {
+        padding: 5rem 0;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- 导航 -->
-  <nav id="navbar">
+  <nav>
     <div class="logo">读三国</div>
     <ul>
-      <li><a href="#daily">今日故事</a></li>
-      <li><a href="#heroes">英雄列传</a></li>
-      <li><a href="#journey">行迹地图</a></li>
-      <li><a href="#attractions">怀古之旅</a></li>
+      <li><a href="#story">故事</a></li>
+      <li><a href="#heroes">列传</a></li>
+      <li><a href="#journey">行迹</a></li>
+      <li><a href="#attractions">遗迹</a></li>
     </ul>
   </nav>
 
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section class="hero">
     <div class="hero-bg"></div>
-    <div class="scroll-frame">
-      <p class="hero-quote">
-        滚滚长江东逝水<br>浪花淘尽英雄<br>
-        是非成败转头空<br>青山依旧在 几度夕阳红
+    <div class="hero-content">
+      <p class="hero-poem">
+        滚滚长江东逝水<br>
+        浪花淘尽英雄
       </p>
-      <h1 class="hero-title">读三国</h1>
-      <p class="hero-subtitle">英雄足迹 · 千年风云</p>
-      <div class="seal">三国</div>
-      <div class="hero-stats">
-        <div class="stat-item">
-          <div class="stat-number">96</div>
-          <div class="stat-label">载春秋</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">10</div>
-          <div class="stat-label">位豪杰</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">50+</div>
-          <div class="stat-label">处遗迹</div>
-        </div>
-      </div>
+      <h1 class="hero-title">三国</h1>
+      <p class="hero-sub">英雄足迹</p>
     </div>
-    <div class="scroll-hint">
-      <span>向下探索</span>
-      <span>↓</span>
-    </div>
+    <div class="scroll-line"></div>
   </section>
 
-  <!-- 今日故事 -->
-  <section class="daily-story" id="daily">
+  <!-- 故事 -->
+  <section class="story-section" id="story">
     <div class="section-header">
-      <div class="section-divider">
-        <span class="section-icon">◇</span>
-      </div>
       <h2 class="section-title">今日故事</h2>
+      <div class="section-line"></div>
     </div>
     <div class="story-container">
-      <div class="story-image-wrapper">
-        <div class="story-image">
-          <img id="storyImage" src="images/sangu.jpg" alt="三顾茅庐">
-        </div>
+      <div class="story-image">
+        <img id="storyImage" src="images/sangu.jpg" alt="">
       </div>
       <div class="story-content">
         <h3 class="story-title" id="storyTitle">三顾茅庐</h3>
-        <div class="story-meta">
-          <span>📅 公元 207 年</span>
-          <span>📍 襄阳 · 隆中</span>
-        </div>
+        <p class="story-meta" id="storyMeta">公元 207 年 · 隆中</p>
         <p class="story-text" id="storyText">
-          建安十二年，刘备三访卧龙岗，终得诸葛亮出山相助。孔明于草庐之中，为刘备分析天下大势，
-          提出"隆中对"战略：先取荆州为根基，再取益州成霸业，联吴抗曹，三分天下。
-          这一会面，改变了三国历史的走向。
+          建安十二年，刘备三访卧龙岗，终得诸葛亮出山相助。孔明于草庐之中，为刘备分析天下大势，提出"隆中对"战略。这一会面，改变了三国历史的走向。
         </p>
         <div class="story-characters" id="storyCharacters">
-          <span class="character-tag" data-hero="liubei">刘备</span>
-          <span class="character-tag" data-hero="zhugeliang">诸葛亮</span>
-          <span class="character-tag" data-hero="guanyu">关羽</span>
-          <span class="character-tag" data-hero="zhangfei">张飞</span>
+          <span class="character-tag">刘备</span>
+          <span class="character-tag">诸葛亮</span>
         </div>
-        <button class="story-btn" id="exploreStoryBtn">探索相关足迹 →</button>
-        <button class="story-btn next-story-btn" id="nextStoryBtn">换一个故事</button>
+        <button class="story-btn" id="exploreBtn">探索足迹</button>
+        <button class="story-btn" id="nextBtn">下一个</button>
       </div>
     </div>
   </section>
 
-  <!-- 英雄列传 -->
+  <!-- 英雄 -->
   <section class="heroes-section" id="heroes">
     <div class="section-header">
-      <div class="section-divider">
-        <span class="section-icon">◆</span>
-      </div>
       <h2 class="section-title">英雄列传</h2>
+      <div class="section-line"></div>
     </div>
-    <div class="heroes-grid" id="heroesGrid">
-      <!-- 动态生成 -->
-    </div>
+    <div class="heroes-grid" id="heroesGrid"></div>
   </section>
 
-  <!-- 行迹地图 -->
+  <!-- 行迹 -->
   <section class="journey-section" id="journey">
     <div class="section-header">
-      <div class="section-divider">
-        <span class="section-icon">◇</span>
-      </div>
-      <h2 class="section-title" id="mapTitle">诸葛亮行迹图</h2>
+      <h2 class="section-title" id="mapTitle">行迹</h2>
+      <div class="section-line"></div>
     </div>
-    <div class="journey-header">
-      <div class="hero-selector" id="heroSelector">
-        <!-- 动态生成 -->
-      </div>
-    </div>
+    <div class="hero-selector" id="heroSelector"></div>
     <div class="map-container">
       <div class="map-wrapper">
         <div id="map"></div>
         <div class="map-legend">
-          <div class="legend-title">图 例</div>
-          <div class="legend-items">
-            <div class="legend-item"><span class="legend-dot birth"></span>出生</div>
-            <div class="legend-item"><span class="legend-dot battle"></span>战役</div>
-            <div class="legend-item"><span class="legend-dot capital"></span>都城</div>
-            <div class="legend-item"><span class="legend-dot death"></span>陨落</div>
-          </div>
+          <div class="legend-item"><span class="legend-dot birth"></span>生</div>
+          <div class="legend-item"><span class="legend-dot battle"></span>战</div>
+          <div class="legend-item"><span class="legend-dot capital"></span>城</div>
+          <div class="legend-item"><span class="legend-dot death"></span>殁</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 怀古景点 -->
+  <!-- 遗迹 -->
   <section class="attractions-section" id="attractions">
     <div class="section-header">
-      <div class="section-divider">
-        <span class="section-icon">◆</span>
-      </div>
-      <h2 class="section-title">怀古之旅</h2>
+      <h2 class="section-title">怀古</h2>
+      <div class="section-line"></div>
     </div>
-    <div class="attractions-grid" id="attractionsGrid">
-      <!-- 动态生成 -->
-    </div>
+    <div class="attractions-grid" id="attractionsGrid"></div>
   </section>
 
-  <!-- Footer -->
   <footer>
-    <p class="footer-quote">古今多少事 都付笑谈中</p>
-    <div class="footer-divider"></div>
-    <p class="footer-text">读三国 · 英雄足迹 | 以史为鉴 可以知兴替</p>
+    <p class="footer-poem">古今多少事 都付笑谈中</p>
+    <div class="footer-line"></div>
   </footer>
 
   <script>
-    const IMG_VERSION = 'v4';
+    const V = 'v5';
     
-    // 英雄数据
     const heroes = [
-      {
-        id: 'caocao',
-        name: '曹操',
-        title: '魏武帝',
-        faction: 'wei',
-        lifespan: '155-220',
-        quote: '宁教我负天下人，休教天下人负我',
-        image: `images/caocao.jpg?${IMG_VERSION}`,
+      { id: 'caocao', name: '曹操', title: '魏武帝 · 155-220', faction: '魏', quote: '宁教我负天下人', image: `images/caocao.jpg?${V}`,
         journeys: [
-          { name: '谯县出生', coords: [116.97, 33.87], year: 155, type: 'birth' },
-          { name: '洛阳入仕', coords: [112.45, 34.62], year: 175, type: 'capital' },
-          { name: '官渡之战', coords: [114.02, 34.85], year: 200, type: 'battle' },
-          { name: '赤壁之战', coords: [113.95, 29.72], year: 208, type: 'battle' },
-          { name: '铜雀台', coords: [114.48, 36.12], year: 210, type: 'capital' },
-          { name: '洛阳薨逝', coords: [112.45, 34.62], year: 220, type: 'death' }
-        ]
-      },
-      {
-        id: 'liubei',
-        name: '刘备',
-        title: '昭烈帝',
-        faction: 'shu',
-        lifespan: '161-223',
-        quote: '勿以恶小而为之，勿以善小而不为',
-        image: `images/liubei.jpg?${IMG_VERSION}`,
+          { name: '谯县', coords: [116.97, 33.87], year: 155, type: 'birth' },
+          { name: '官渡', coords: [114.02, 34.85], year: 200, type: 'battle' },
+          { name: '赤壁', coords: [113.95, 29.72], year: 208, type: 'battle' },
+          { name: '洛阳', coords: [112.45, 34.62], year: 220, type: 'death' }
+        ]},
+      { id: 'liubei', name: '刘备', title: '昭烈帝 · 161-223', faction: '蜀', quote: '勿以恶小而为之', image: `images/liubei.jpg?${V}`,
         journeys: [
-          { name: '涿郡出生', coords: [115.97, 39.48], year: 161, type: 'birth' },
-          { name: '桃园结义', coords: [115.97, 39.48], year: 184, type: 'capital' },
-          { name: '三顾茅庐', coords: [112.13, 32.01], year: 207, type: 'capital' },
-          { name: '赤壁之战', coords: [113.95, 29.72], year: 208, type: 'battle' },
-          { name: '入主成都', coords: [104.06, 30.67], year: 214, type: 'capital' },
-          { name: '夷陵之战', coords: [111.28, 30.77], year: 222, type: 'battle' },
-          { name: '白帝托孤', coords: [109.55, 31.04], year: 223, type: 'death' }
-        ]
-      },
-      {
-        id: 'zhugeliang',
-        name: '诸葛亮',
-        title: '武侯',
-        faction: 'shu',
-        lifespan: '181-234',
-        quote: '鞠躬尽瘁，死而后已',
-        image: `images/zhugeliang.jpg?${IMG_VERSION}`,
+          { name: '涿郡', coords: [115.97, 39.48], year: 161, type: 'birth' },
+          { name: '隆中', coords: [112.13, 32.01], year: 207, type: 'capital' },
+          { name: '成都', coords: [104.06, 30.67], year: 214, type: 'capital' },
+          { name: '白帝城', coords: [109.55, 31.04], year: 223, type: 'death' }
+        ]},
+      { id: 'zhugeliang', name: '诸葛亮', title: '武侯 · 181-234', faction: '蜀', quote: '鞠躬尽瘁', image: `images/zhugeliang.jpg?${V}`,
         journeys: [
-          { name: '琅琊出生', coords: [118.34, 35.10], year: 181, type: 'birth' },
-          { name: '隆中隐居', coords: [112.13, 32.01], year: 197, type: 'capital' },
-          { name: '出山辅汉', coords: [112.13, 32.01], year: 207, type: 'capital' },
-          { name: '赤壁借风', coords: [113.95, 29.72], year: 208, type: 'battle' },
-          { name: '入蜀辅政', coords: [104.06, 30.67], year: 214, type: 'capital' },
-          { name: '南征孟获', coords: [100.23, 25.60], year: 225, type: 'battle' },
-          { name: '六出祁山', coords: [105.72, 34.58], year: 228, type: 'battle' },
+          { name: '琅琊', coords: [118.34, 35.10], year: 181, type: 'birth' },
+          { name: '隆中', coords: [112.13, 32.01], year: 207, type: 'capital' },
+          { name: '成都', coords: [104.06, 30.67], year: 214, type: 'capital' },
           { name: '五丈原', coords: [107.40, 34.30], year: 234, type: 'death' }
-        ]
-      },
-      {
-        id: 'guanyu',
-        name: '关羽',
-        title: '武圣',
-        faction: 'shu',
-        lifespan: '160-220',
-        quote: '身在曹营心在汉',
-        image: `images/guanyu.jpg?${IMG_VERSION}`,
+        ]},
+      { id: 'guanyu', name: '关羽', title: '武圣 · 160-220', faction: '蜀', quote: '身在曹营心在汉', image: `images/guanyu.jpg?${V}`,
         journeys: [
-          { name: '河东出生', coords: [110.99, 35.02], year: 160, type: 'birth' },
-          { name: '桃园结义', coords: [115.97, 39.48], year: 184, type: 'capital' },
-          { name: '斩颜良诛文丑', coords: [114.02, 34.85], year: 200, type: 'battle' },
-          { name: '镇守荆州', coords: [112.24, 30.33], year: 211, type: 'capital' },
-          { name: '水淹七军', coords: [112.53, 32.68], year: 219, type: 'battle' },
-          { name: '败走麦城', coords: [111.67, 30.68], year: 220, type: 'death' }
-        ]
-      },
-      {
-        id: 'zhangfei',
-        name: '张飞',
-        title: '桓侯',
-        faction: 'shu',
-        lifespan: '166-221',
-        quote: '燕人张翼德在此',
-        image: `images/zhangfei.jpg?${IMG_VERSION}`,
+          { name: '河东', coords: [110.99, 35.02], year: 160, type: 'birth' },
+          { name: '荆州', coords: [112.24, 30.33], year: 211, type: 'capital' },
+          { name: '麦城', coords: [111.67, 30.68], year: 220, type: 'death' }
+        ]},
+      { id: 'zhangfei', name: '张飞', title: '桓侯 · 166-221', faction: '蜀', quote: '燕人张翼德', image: `images/zhangfei.jpg?${V}`,
         journeys: [
-          { name: '涿郡出生', coords: [115.97, 39.48], year: 166, type: 'birth' },
-          { name: '桃园结义', coords: [115.97, 39.48], year: 184, type: 'capital' },
+          { name: '涿郡', coords: [115.97, 39.48], year: 166, type: 'birth' },
           { name: '长坂坡', coords: [111.75, 31.03], year: 208, type: 'battle' },
-          { name: '义释严颜', coords: [106.55, 29.56], year: 214, type: 'battle' },
-          { name: '阆中遇害', coords: [105.97, 31.58], year: 221, type: 'death' }
-        ]
-      },
-      {
-        id: 'sunquan',
-        name: '孙权',
-        title: '大帝',
-        faction: 'wu',
-        lifespan: '182-252',
-        quote: '生子当如孙仲谋',
-        image: `images/sunquan.jpg?${IMG_VERSION}`,
+          { name: '阆中', coords: [105.97, 31.58], year: 221, type: 'death' }
+        ]},
+      { id: 'sunquan', name: '孙权', title: '大帝 · 182-252', faction: '吴', quote: '生子当如孙仲谋', image: `images/sunquan.jpg?${V}`,
         journeys: [
-          { name: '富春出生', coords: [119.95, 29.99], year: 182, type: 'birth' },
-          { name: '继承江东', coords: [120.15, 30.28], year: 200, type: 'capital' },
-          { name: '赤壁之战', coords: [113.95, 29.72], year: 208, type: 'battle' },
-          { name: '建业建都', coords: [118.78, 32.06], year: 229, type: 'capital' },
-          { name: '建业薨逝', coords: [118.78, 32.06], year: 252, type: 'death' }
-        ]
-      },
-      {
-        id: 'zhouyu',
-        name: '周瑜',
-        title: '大都督',
-        faction: 'wu',
-        lifespan: '175-210',
-        quote: '既生瑜，何生亮',
-        image: `images/zhouyu.jpg?${IMG_VERSION}`,
+          { name: '富春', coords: [119.95, 29.99], year: 182, type: 'birth' },
+          { name: '赤壁', coords: [113.95, 29.72], year: 208, type: 'battle' },
+          { name: '建业', coords: [118.78, 32.06], year: 252, type: 'death' }
+        ]},
+      { id: 'zhouyu', name: '周瑜', title: '都督 · 175-210', faction: '吴', quote: '既生瑜何生亮', image: `images/zhouyu.jpg?${V}`,
         journeys: [
-          { name: '庐江出生', coords: [117.18, 31.26], year: 175, type: 'birth' },
-          { name: '赤壁破曹', coords: [113.95, 29.72], year: 208, type: 'battle' },
-          { name: '南郡之战', coords: [112.18, 30.42], year: 209, type: 'battle' },
-          { name: '巴丘病逝', coords: [113.09, 29.45], year: 210, type: 'death' }
-        ]
-      },
-      {
-        id: 'lvbu',
-        name: '吕布',
-        title: '飞将',
-        faction: 'wei',
-        lifespan: '?-199',
-        quote: '人中吕布，马中赤兔',
-        image: `images/lvbu.jpg?${IMG_VERSION}`,
+          { name: '庐江', coords: [117.18, 31.26], year: 175, type: 'birth' },
+          { name: '赤壁', coords: [113.95, 29.72], year: 208, type: 'battle' },
+          { name: '巴丘', coords: [113.09, 29.45], year: 210, type: 'death' }
+        ]},
+      { id: 'lvbu', name: '吕布', title: '飞将 · ?-199', faction: '魏', quote: '人中吕布', image: `images/lvbu.jpg?${V}`,
         journeys: [
-          { name: '九原出生', coords: [110.00, 40.75], year: 156, type: 'birth' },
-          { name: '杀董卓', coords: [112.45, 34.62], year: 192, type: 'battle' },
-          { name: '徐州割据', coords: [117.18, 34.26], year: 196, type: 'capital' },
-          { name: '下邳被擒', coords: [117.95, 34.32], year: 199, type: 'death' }
-        ]
-      },
-      {
-        id: 'simayi',
-        name: '司马懿',
-        title: '宣帝',
-        faction: 'wei',
-        lifespan: '179-251',
-        quote: '忍常人所不能忍',
-        image: `images/simayi.jpg?${IMG_VERSION}`,
+          { name: '九原', coords: [110.00, 40.75], year: 156, type: 'birth' },
+          { name: '洛阳', coords: [112.45, 34.62], year: 192, type: 'battle' },
+          { name: '下邳', coords: [117.95, 34.32], year: 199, type: 'death' }
+        ]},
+      { id: 'simayi', name: '司马懿', title: '宣帝 · 179-251', faction: '魏', quote: '忍常人不能忍', image: `images/simayi.jpg?${V}`,
         journeys: [
-          { name: '温县出生', coords: [112.93, 34.94], year: 179, type: 'birth' },
-          { name: '辅佐曹丕', coords: [114.48, 36.12], year: 220, type: 'capital' },
-          { name: '抗衡诸葛', coords: [107.40, 34.30], year: 231, type: 'battle' },
-          { name: '高平陵政变', coords: [112.45, 34.62], year: 249, type: 'battle' },
-          { name: '洛阳薨逝', coords: [112.45, 34.62], year: 251, type: 'death' }
-        ]
-      },
-      {
-        id: 'diaochan',
-        name: '貂蝉',
-        title: '四大美人',
-        faction: 'wei',
-        lifespan: '?-?',
-        quote: '舞尽朝霞君莫问',
-        image: `images/diaochan.jpg?${IMG_VERSION}`,
+          { name: '温县', coords: [112.93, 34.94], year: 179, type: 'birth' },
+          { name: '五丈原', coords: [107.40, 34.30], year: 234, type: 'battle' },
+          { name: '洛阳', coords: [112.45, 34.62], year: 251, type: 'death' }
+        ]},
+      { id: 'diaochan', name: '貂蝉', title: '绝色', faction: '魏', quote: '舞尽朝霞', image: `images/diaochan.jpg?${V}`,
         journeys: [
-          { name: '并州出生', coords: [112.55, 37.87], year: 170, type: 'birth' },
-          { name: '连环计', coords: [112.45, 34.62], year: 192, type: 'capital' }
-        ]
-      }
+          { name: '并州', coords: [112.55, 37.87], year: 170, type: 'birth' },
+          { name: '洛阳', coords: [112.45, 34.62], year: 192, type: 'capital' }
+        ]}
     ];
 
-    // 故事库
     const stories = [
-      {
-        title: '三顾茅庐',
-        year: 207,
-        location: '襄阳 · 隆中',
-        image: 'images/sangu.jpg',
-        text: '建安十二年，刘备三访卧龙岗，终得诸葛亮出山相助。孔明于草庐之中，为刘备分析天下大势，提出"隆中对"战略：先取荆州为根基，再取益州成霸业，联吴抗曹，三分天下。这一会面，改变了三国历史的走向。',
-        characters: ['liubei', 'zhugeliang', 'guanyu', 'zhangfei']
-      },
-      {
-        title: '赤壁之战',
-        year: 208,
-        location: '赤壁',
-        image: 'images/chibi.jpg',
-        text: '建安十三年，曹操率八十万大军南下，欲一统天下。孙刘联军以五万之众，借东风火烧连营，大破曹军。此战奠定了三国鼎立的格局，也成就了周瑜、诸葛亮的千古威名。',
-        characters: ['caocao', 'zhouyu', 'zhugeliang', 'sunquan']
-      },
-      {
-        title: '桃园结义',
-        year: 184,
-        location: '涿郡',
-        image: 'images/taoyuan.jpg',
-        text: '东汉末年，刘备、关羽、张飞三人在张飞庄后的桃园中结为异姓兄弟，对天盟誓："不求同年同月同日生，只愿同年同月同日死。"从此三人生死与共，共图大业。',
-        characters: ['liubei', 'guanyu', 'zhangfei']
-      },
-      {
-        title: '官渡之战',
-        year: 200,
-        location: '官渡',
-        image: 'images/guandu.jpg',
-        text: '建安五年，曹操以少胜多，大败袁绍于官渡。此战曹操火烧乌巢，断其粮草，一举奠定北方霸主地位，成为中国历史上著名的以少胜多的战役。',
-        characters: ['caocao']
-      },
-      {
-        title: '白帝托孤',
-        year: 223,
-        location: '白帝城',
-        image: 'images/baidi.jpg',
-        text: '章武三年，刘备病重，召诸葛亮至白帝城托付后事。临终前说："君才十倍曹丕，必能安国，终定大事。若嗣子可辅，辅之；如其不才，君可自取。"孔明泣拜："臣敢竭股肱之力，效忠贞之节，继之以死！"',
-        characters: ['liubei', 'zhugeliang']
-      },
-      {
-        title: '七擒孟获',
-        year: 225,
-        location: '南中',
-        image: 'images/menghu.jpg',
-        text: '建兴三年，诸葛亮南征孟获。七次擒获孟获，又七次释放。孟获终被诸葛亮的仁德所折服，发誓永不反叛。此举稳定了蜀汉南方，诸葛亮得以全力北伐。',
-        characters: ['zhugeliang']
-      },
-      {
-        title: '空城计',
-        year: 228,
-        location: '西城',
-        image: 'images/kongcheng.jpg',
-        text: '建兴六年，诸葛亮北伐失利，司马懿率大军追至西城。诸葛亮城中仅有千余老弱残兵，遂大开城门，独坐城楼抚琴。司马懿疑有伏兵，不敢进攻，引军退去。',
-        characters: ['zhugeliang', 'simayi']
-      },
-      {
-        title: '五丈原',
-        year: 234,
-        location: '五丈原',
-        image: 'images/wuzhangyuan.jpg',
-        text: '建兴十二年，诸葛亮第六次北伐，与司马懿对峙于五丈原。积劳成疾，病逝军中，享年五十四岁。"出师未捷身先死，长使英雄泪满襟。"一代名相，鞠躬尽瘁，死而后已。',
-        characters: ['zhugeliang', 'simayi']
-      }
+      { title: '三顾茅庐', year: 207, location: '隆中', image: 'images/sangu.jpg',
+        text: '建安十二年，刘备三访卧龙岗，终得诸葛亮出山相助。孔明于草庐之中，为刘备分析天下大势，提出"隆中对"战略。这一会面，改变了三国历史的走向。',
+        characters: ['liubei', 'zhugeliang'] },
+      { title: '赤壁之战', year: 208, location: '赤壁', image: 'images/chibi.jpg',
+        text: '建安十三年，曹操率大军南下。孙刘联军借东风火烧连营，大破曹军。此战奠定三分天下之势。',
+        characters: ['zhouyu', 'zhugeliang', 'caocao'] },
+      { title: '桃园结义', year: 184, location: '涿郡', image: 'images/taoyuan.jpg',
+        text: '刘关张三人于桃园结为异姓兄弟。"不求同年同月同日生，只愿同年同月同日死。"',
+        characters: ['liubei', 'guanyu', 'zhangfei'] },
+      { title: '白帝托孤', year: 223, location: '白帝城', image: 'images/baidi.jpg',
+        text: '章武三年，刘备病重，召诸葛亮至白帝城托付后事。"君可自取。"孔明泣拜："臣敢竭股肱之力。"',
+        characters: ['liubei', 'zhugeliang'] },
+      { title: '空城计', year: 228, location: '西城', image: 'images/kongcheng.jpg',
+        text: '诸葛亮城中无兵，大开城门，独坐城楼抚琴。司马懿疑有伏兵，不敢进攻，引军退去。',
+        characters: ['zhugeliang', 'simayi'] },
+      { title: '五丈原', year: 234, location: '五丈原', image: 'images/wuzhangyuan.jpg',
+        text: '诸葛亮病逝军中。"出师未捷身先死，长使英雄泪满襟。"一代名相，鞠躬尽瘁。',
+        characters: ['zhugeliang', 'simayi'] }
     ];
 
-    // 景点数据
     const attractions = [
-      {
-        name: '赤壁古战场',
-        location: '湖北 · 咸宁',
-        desc: '三国赤壁之战遗址，可观"赤壁"摩崖石刻，感受当年火烧连营的壮阔。',
-        image: 'images/attraction-chibi.jpg'
-      },
-      {
-        name: '武侯祠',
-        location: '四川 · 成都',
-        desc: '全国唯一君臣合祀祠庙，纪念蜀汉丞相诸葛亮，感受"出师表"的千古忠魂。',
-        image: 'images/attraction-wuhou.jpg'
-      },
-      {
-        name: '白帝城',
-        location: '重庆 · 奉节',
-        desc: '刘备托孤之地，长江三峡西端入口，"朝辞白帝彩云间"的所在。',
-        image: 'images/attraction-baidi.jpg'
-      },
-      {
-        name: '古隆中',
-        location: '湖北 · 襄阳',
-        desc: '诸葛亮躬耕地，三顾茅庐故事发生地，游隆中可感受卧龙出山前的宁静。',
-        image: 'images/attraction-longzhong.jpg'
-      },
-      {
-        name: '曹操墓',
-        location: '河南 · 安阳',
-        desc: '2009年发现的曹操高陵，一代枭雄最终归宿，揭开千年之谜。',
-        image: 'images/attraction-caocao.jpg'
-      },
-      {
-        name: '关林',
-        location: '河南 · 洛阳',
-        desc: '关羽首级埋葬地，中国三大关庙之一，香火鼎盛的武圣祠。',
-        image: 'images/attraction-guanlin.jpg'
-      }
+      { name: '赤壁', location: '湖北咸宁', image: 'images/attraction-chibi.jpg' },
+      { name: '武侯祠', location: '四川成都', image: 'images/attraction-wuhou.jpg' },
+      { name: '白帝城', location: '重庆奉节', image: 'images/attraction-baidi.jpg' },
+      { name: '古隆中', location: '湖北襄阳', image: 'images/attraction-longzhong.jpg' },
+      { name: '曹操墓', location: '河南安阳', image: 'images/attraction-caocao.jpg' },
+      { name: '关林', location: '河南洛阳', image: 'images/attraction-guanlin.jpg' }
     ];
 
-    let currentStoryIndex = 0;
-    let currentHeroId = 'zhugeliang';
-    let map;
+    let storyIdx = 0, heroId = 'zhugeliang', map;
 
-    // 初始化英雄卡片
-    function initHeroCards() {
-      const grid = document.getElementById('heroesGrid');
-      grid.innerHTML = heroes.map(hero => `
-        <div class="hero-card" data-hero="${hero.id}">
-          <div class="hero-faction faction-${hero.faction}">${hero.faction === 'wei' ? '魏' : hero.faction === 'shu' ? '蜀' : '吴'}</div>
-          <div class="hero-card-image">
-            <img src="${hero.image}" alt="${hero.name}" onerror="this.src='images/default-hero.jpg'">
-          </div>
+    function initHeroes() {
+      document.getElementById('heroesGrid').innerHTML = heroes.map(h => `
+        <div class="hero-card" data-id="${h.id}">
+          <span class="hero-faction">${h.faction}</span>
+          <div class="hero-card-image"><img src="${h.image}" alt="${h.name}"></div>
           <div class="hero-card-content">
-            <h3 class="hero-card-name">${hero.name}</h3>
-            <p class="hero-card-title">${hero.title} · ${hero.lifespan}</p>
-            <p class="hero-card-quote">"${hero.quote}"</p>
+            <h3 class="hero-card-name">${h.name}</h3>
+            <p class="hero-card-title">${h.title}</p>
+            <p class="hero-card-quote">${h.quote}</p>
           </div>
         </div>
       `).join('');
-
-      document.querySelectorAll('.hero-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const heroId = card.dataset.hero;
-          loadHeroJourney(heroId);
-          document.getElementById('journey').scrollIntoView({ behavior: 'smooth' });
-        });
+      
+      document.querySelectorAll('.hero-card').forEach(c => c.onclick = () => {
+        loadJourney(c.dataset.id);
+        document.getElementById('journey').scrollIntoView({ behavior: 'smooth' });
       });
     }
 
-    // 初始化英雄选择器
-    function initHeroSelector() {
-      const selector = document.getElementById('heroSelector');
-      selector.innerHTML = heroes.slice(0, 6).map(hero => `
-        <button class="hero-selector-btn ${hero.id === currentHeroId ? 'active' : ''}" data-hero="${hero.id}">
-          <img src="${hero.image}" alt="${hero.name}" onerror="this.src='images/default-hero.jpg'">
-          ${hero.name}
+    function initSelector() {
+      document.getElementById('heroSelector').innerHTML = heroes.slice(0,6).map(h => `
+        <button class="hero-selector-btn ${h.id === heroId ? 'active' : ''}" data-id="${h.id}">
+          <img src="${h.image}" alt="">${h.name}
         </button>
       `).join('');
-
-      selector.querySelectorAll('.hero-selector-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          selector.querySelectorAll('.hero-selector-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          loadHeroJourney(btn.dataset.hero);
-        });
+      
+      document.querySelectorAll('.hero-selector-btn').forEach(b => b.onclick = () => {
+        document.querySelectorAll('.hero-selector-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        loadJourney(b.dataset.id);
       });
     }
 
-    // 初始化景点
     function initAttractions() {
-      const grid = document.getElementById('attractionsGrid');
-      grid.innerHTML = attractions.map(attr => `
+      document.getElementById('attractionsGrid').innerHTML = attractions.map(a => `
         <div class="attraction-card">
-          <img src="${attr.image}" alt="${attr.name}" onerror="this.src='images/default-attraction.jpg'">
+          <img src="${a.image}" alt="${a.name}">
           <div class="attraction-overlay">
-            <h3 class="attraction-name">${attr.name}</h3>
-            <p class="attraction-location">📍 ${attr.location}</p>
-            <p class="attraction-desc">${attr.desc}</p>
+            <h3 class="attraction-name">${a.name}</h3>
+            <p class="attraction-location">${a.location}</p>
           </div>
         </div>
       `).join('');
     }
 
-    // 加载故事
-    function loadStory(index) {
-      const story = stories[index];
-      document.getElementById('storyTitle').textContent = story.title;
-      document.getElementById('storyText').textContent = story.text;
-      document.getElementById('storyImage').src = story.image;
-      document.querySelector('.story-meta').innerHTML = `
-        <span>📅 公元 ${story.year} 年</span>
-        <span>📍 ${story.location}</span>
-      `;
-      
-      const charactersDiv = document.getElementById('storyCharacters');
-      charactersDiv.innerHTML = story.characters.map(id => {
-        const hero = heroes.find(h => h.id === id);
-        return hero ? `<span class="character-tag" data-hero="${id}">${hero.name}</span>` : '';
+    function loadStory(i) {
+      const s = stories[i];
+      document.getElementById('storyTitle').textContent = s.title;
+      document.getElementById('storyMeta').textContent = `公元 ${s.year} 年 · ${s.location}`;
+      document.getElementById('storyText').textContent = s.text;
+      document.getElementById('storyImage').src = s.image;
+      document.getElementById('storyCharacters').innerHTML = s.characters.map(id => {
+        const h = heroes.find(x => x.id === id);
+        return h ? `<span class="character-tag" data-id="${id}">${h.name}</span>` : '';
       }).join('');
-
-      charactersDiv.querySelectorAll('.character-tag').forEach(tag => {
-        tag.addEventListener('click', () => {
-          loadHeroJourney(tag.dataset.hero);
-          document.getElementById('journey').scrollIntoView({ behavior: 'smooth' });
-        });
+      document.querySelectorAll('.character-tag').forEach(t => t.onclick = () => {
+        loadJourney(t.dataset.id);
+        document.getElementById('journey').scrollIntoView({ behavior: 'smooth' });
       });
     }
 
-    // 加载英雄行迹
-    function loadHeroJourney(heroId) {
-      currentHeroId = heroId;
-      const hero = heroes.find(h => h.id === heroId);
-      if (!hero) return;
+    function loadJourney(id) {
+      heroId = id;
+      const h = heroes.find(x => x.id === id);
+      if (!h) return;
+      
+      document.getElementById('mapTitle').textContent = h.name + ' · 行迹';
+      document.querySelectorAll('.hero-selector-btn').forEach(b => b.classList.toggle('active', b.dataset.id === id));
 
-      document.getElementById('mapTitle').textContent = `${hero.name}行迹图`;
-
-      document.querySelectorAll('.hero-selector-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.hero === heroId);
-      });
-
-      if (map.getSource('journey-line')) {
-        map.removeLayer('journey-line-layer');
-        map.removeSource('journey-line');
-      }
-      if (map.getSource('journey-points')) {
-        map.removeLayer('journey-points-layer');
-        map.removeSource('journey-points');
-      }
-
-      const coordinates = hero.journeys.map(j => j.coords);
-      map.addSource('journey-line', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: coordinates
-          }
+      ['journey-line', 'journey-points'].forEach(src => {
+        if (map.getSource(src)) {
+          map.removeLayer(src + '-layer');
+          map.removeSource(src);
         }
       });
 
+      const coords = h.journeys.map(j => j.coords);
+      
+      map.addSource('journey-line', {
+        type: 'geojson',
+        data: { type: 'Feature', geometry: { type: 'LineString', coordinates: coords } }
+      });
+      
       map.addLayer({
         id: 'journey-line-layer',
         type: 'line',
         source: 'journey-line',
-        paint: {
-          'line-color': hero.faction === 'wei' ? '#1E3A5F' : hero.faction === 'shu' ? '#2D5A27' : '#8B2323',
-          'line-width': 2,
-          'line-dasharray': [3, 2]
-        }
+        paint: { 'line-color': '#666', 'line-width': 1, 'line-dasharray': [4, 2] }
       });
 
       map.addSource('journey-points', {
         type: 'geojson',
         data: {
           type: 'FeatureCollection',
-          features: hero.journeys.map(j => ({
+          features: h.journeys.map(j => ({
             type: 'Feature',
             geometry: { type: 'Point', coordinates: j.coords },
-            properties: {
-              name: j.name,
-              year: j.year,
-              type: j.type
-            }
+            properties: j
           }))
         }
       });
@@ -1412,104 +889,45 @@
         type: 'circle',
         source: 'journey-points',
         paint: {
-          'circle-radius': 7,
-          'circle-color': [
-            'match',
-            ['get', 'type'],
-            'birth', '#4CAF50',
-            'battle', '#E34234',
-            'capital', '#B8860B',
-            'death', '#666666',
-            '#B8860B'
-          ],
-          'circle-stroke-width': 2,
+          'circle-radius': 5,
+          'circle-color': ['match', ['get', 'type'], 'birth', '#6b8e6b', 'battle', '#a05a5a', 'capital', '#8b8b6b', 'death', '#5a5a5a', '#666'],
+          'circle-stroke-width': 1,
           'circle-stroke-color': '#fff'
         }
       });
 
-      const bounds = coordinates.reduce((bounds, coord) => {
-        return bounds.extend(coord);
-      }, new maplibregl.LngLatBounds(coordinates[0], coordinates[0]));
+      const bounds = coords.reduce((b, c) => b.extend(c), new maplibregl.LngLatBounds(coords[0], coords[0]));
+      map.fitBounds(bounds, { padding: 50 });
 
-      map.fitBounds(bounds, { padding: 60 });
-
-      map.on('click', 'journey-points-layer', (e) => {
-        const props = e.features[0].properties;
-        new maplibregl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(`<strong>${props.name}</strong><br>公元 ${props.year} 年`)
-          .addTo(map);
-      });
-
-      map.on('mouseenter', 'journey-points-layer', () => {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-
-      map.on('mouseleave', 'journey-points-layer', () => {
-        map.getCanvas().style.cursor = '';
+      map.on('click', 'journey-points-layer', e => {
+        const p = e.features[0].properties;
+        new maplibregl.Popup().setLngLat(e.lngLat).setHTML(`<b>${p.name}</b><br>${p.year}年`).addTo(map);
       });
     }
 
-    // 初始化地图
     function initMap() {
       map = new maplibregl.Map({
         container: 'map',
         style: {
           version: 8,
-          sources: {
-            'carto-dark': {
-              type: 'raster',
-              tiles: ['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'],
-              tileSize: 256,
-              attribution: '&copy; OpenStreetMap &copy; CARTO'
-            }
-          },
-          layers: [{
-            id: 'carto-dark-layer',
-            type: 'raster',
-            source: 'carto-dark',
-            minzoom: 0,
-            maxzoom: 19
-          }]
+          sources: { 'carto': { type: 'raster', tiles: ['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'], tileSize: 256 } },
+          layers: [{ id: 'carto', type: 'raster', source: 'carto' }]
         },
         center: [108, 34],
-        zoom: 4.5
+        zoom: 4
       });
-
-      map.on('load', () => {
-        loadHeroJourney(currentHeroId);
-      });
+      map.on('load', () => loadJourney(heroId));
     }
 
-    // 导航栏滚动效果
-    window.addEventListener('scroll', () => {
-      const navbar = document.getElementById('navbar');
-      if (window.scrollY > 100) {
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-      }
-    });
+    document.getElementById('nextBtn').onclick = () => { storyIdx = (storyIdx + 1) % stories.length; loadStory(storyIdx); };
+    document.getElementById('exploreBtn').onclick = () => {
+      const s = stories[storyIdx];
+      if (s.characters[0]) { loadJourney(s.characters[0]); document.getElementById('journey').scrollIntoView({ behavior: 'smooth' }); }
+    };
 
-    // 下一个故事
-    document.getElementById('nextStoryBtn').addEventListener('click', () => {
-      currentStoryIndex = (currentStoryIndex + 1) % stories.length;
-      loadStory(currentStoryIndex);
-    });
-
-    // 探索故事相关足迹
-    document.getElementById('exploreStoryBtn').addEventListener('click', () => {
-      const story = stories[currentStoryIndex];
-      if (story.characters.length > 0) {
-        loadHeroJourney(story.characters[0]);
-        document.getElementById('journey').scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-
-    // 初始化
     document.addEventListener('DOMContentLoaded', () => {
-      initHeroCards();
-      initHeroSelector();
+      initHeroes();
+      initSelector();
       initAttractions();
       initMap();
       loadStory(0);
